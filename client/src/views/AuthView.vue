@@ -21,15 +21,15 @@ const registerData = reactive({
 });
 
 const loginSchema = yup.object().shape({
-  email: yup.string().required().email(),
-  password: yup.string().required()
+  password: yup.string().required(),
+  email: yup.string().required().email()
 });
 
 const registerSchema = yup.object().shape({
-  name: yup.string().required().max(255),
-  email: yup.string().required().email(),
+  confirm: yup.string().required().oneOf([yup.ref('password')], "Passwords must be match."),
   password: yup.string().required().min(6).max(30),
-  confirm: yup.string().required().oneOf([yup.ref('password')], "Passwords must be match.")
+  email: yup.string().required().email(),
+  name: yup.string().required().max(255)
 });
 
 const loginSubmit = () => {
@@ -47,7 +47,17 @@ const loginSubmit = () => {
 }
 
 const registerSubmit = () => {
-
+  registerSchema.validate(registerData)
+    .then(() => console.info('Validation success!'))
+    .catch(error => Swal.fire({
+      toast: true,
+      position: "top-right",
+      timer: 3000,
+      timerProgressBar: true,
+      icon: "error",
+      text: error,
+      showConfirmButton: false
+    }));
 }
 
 const toggleMethod = () => {
@@ -61,7 +71,6 @@ const toggleMethod = () => {
       <div class="login">
         <form :class="authMethod.isLogin ? '' : 'invisible'" @submit.prevent="loginSubmit">
           <MDBInput name="email" label="Email ID" type="text" size="lg" v-model="loginData.email" />
-
           <MDBInput name="password" label="Password" type="password" size="lg" v-model="loginData.password" />
 
           <p @click="toggleMethod">You don't have an account?</p>
@@ -70,12 +79,10 @@ const toggleMethod = () => {
       </div>
 
       <div class="register">
-        <form :class="!authMethod.isLogin ? '' : 'invisible'" @submit="registerSubmit">
+        <form :class="!authMethod.isLogin ? '' : 'invisible'" @submit.prevent="registerSubmit">
           <MDBInput name="name" size="lg" type="text" label="Full Name" v-model="registerData.name" />
           <MDBInput name="email" size="lg" type="text" label="Email ID" v-model="registerData.email" />
-
           <MDBInput name="password" size="lg" type="password" label="New Password" v-model="registerData.password" />
-
           <MDBInput name="confirm" size="lg" type="password" label="Confirm Password" v-model="registerData.confirm" />
 
           <p @click="toggleMethod">Already have an account?</p>
