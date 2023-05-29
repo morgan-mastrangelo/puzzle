@@ -129,7 +129,7 @@ const sendOption = () => {
 
       <div style="margin-top:32px">
         <p><MDBIcon icon="home" /> Time(second):</p>
-        <MDBRange :min="0" :max="3600" v-model="level.time" />
+        <MDBRange :min="0" :max="2000" v-model="level.time" />
       </div>
 
       <div class="content-center">

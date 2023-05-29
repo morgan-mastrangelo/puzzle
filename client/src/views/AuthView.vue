@@ -1,8 +1,11 @@
 <script setup lang="ts">
 import Swal from 'sweetalert2';
+import { useUserStore } from '@/stores/user';
 import { reactive } from 'vue';
 import { MDBInput } from 'mdb-vue-ui-kit';
 import * as yup from 'yup';
+
+const store = useUserStore();
 
 const authMethod = reactive({
   isLogin: true
@@ -48,7 +51,47 @@ const loginSubmit = () => {
 
 const registerSubmit = () => {
   registerSchema.validate(registerData)
-    .then(() => console.info('Validation success!'))
+    .then(() => {
+      store.registerUser(registerData)
+        .then(response => {
+          if (response.success) {
+            Swal.fire({
+              toast: true,
+              position: 'top-right',
+              icon: 'success',
+              timer: 3000,
+              timerProgressBar: true,
+              text: response.message,
+              showConfirmButton: false
+            });
+
+            registerData.name = '';
+            registerData.email = '';
+            registerData.password = '';
+            registerData.confirm = '';
+            authMethod.isLogin = true;
+          } else {
+            Swal.fire({
+              toast: true,
+              position: 'top-right',
+              icon: 'error',
+              timer: 3000,
+              timerProgressBar: true,
+              text: response.message,
+              showConfirmButton: false
+            });
+          }
+        })
+        .catch(error => Swal.fire({
+          toast: true,
+          position: 'top-right',
+          icon: 'error',
+          timer: 3000,
+          timerProgressBar: true,
+          text: error.message,
+          showConfirmButton: false
+        }));
+    })
     .catch(error => Swal.fire({
       toast: true,
       position: "top-right",
@@ -66,18 +109,15 @@ const toggleMethod = () => {
 </script>
 
 <template>
-  <RouterLink
-    to="/"
-    style="
-      position: absolute;
-      top: 0;
-      left: 0;
-      margin: 24px;
-    "
-  >
+  <RouterLink to="/" style="
+        position: absolute;
+        top: 0;
+        left: 0;
+        margin: 24px;
+      ">
     BACK
   </RouterLink>
-  
+
   <div class="center-align">
     <div class="auth-card">
       <div class="login">

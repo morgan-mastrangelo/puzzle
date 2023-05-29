@@ -75,9 +75,7 @@ function setCardOpen(change: PuzzleMatrix): void {
                   puzzleMatrix.value[j].open = false;
                   puzzleMatrix.value[i].open = false;
 
-                  if (remainCards.value <= 0) {
-                    console.log('Congratulations!');
-                  }
+                  if (remainCards.value <= 0) finishGame();
                 }, 500);
               }
             }

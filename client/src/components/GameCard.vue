@@ -17,7 +17,7 @@ function toggleOpen() {
     @click="toggleOpen"
     :class="props.data.hint ? 'hint' : props.data.matched ? 'matched' : props.data.open ? 'active' : ''"
   >
-    <span>{{ props.data.value }}</span>
+    <span></span>
     <slot></slot>
   </div>
 </template>

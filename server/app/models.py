@@ -7,6 +7,7 @@ class UserModel(models.Model):
     email = models.EmailField()
     password = models.CharField(max_length=255)
     createdAt = models.DateTimeField(auto_now_add=True)
+    updatedAt = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         db_table = 'users'
