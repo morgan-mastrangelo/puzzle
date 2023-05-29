@@ -66,6 +66,18 @@ const toggleMethod = () => {
 </script>
 
 <template>
+  <RouterLink
+    to="/"
+    style="
+      position: absolute;
+      top: 0;
+      left: 0;
+      margin: 24px;
+    "
+  >
+    BACK
+  </RouterLink>
+  
   <div class="center-align">
     <div class="auth-card">
       <div class="login">

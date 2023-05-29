@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import Swal from 'sweetalert2';
-import { MDBInput, MDBRadio, MDBBtn } from 'mdb-vue-ui-kit';
+import { MDBInput, MDBRadio, MDBBtn, MDBIcon, MDBRange } from 'mdb-vue-ui-kit';
 import { reactive } from 'vue';
 
 const level = reactive({
   difficulty: 'easy',
   size: 4,
-  disabled: true
+  disabled: true,
+  time: 300
 });
 
 const changeLevel = (value: string) => {
@@ -22,14 +23,34 @@ const changeLevel = (value: string) => {
 }
 
 const sendOption = () => {
-  if(level.size < 4 || level.size > 12 || level.size % 2 !== 0) {
+  if(level.size % 2 !== 0) {
     Swal.fire({
       toast: true,
       position: "top-right",
       icon: 'error',
       timer: 3000,
       timerProgressBar: true,
-      text: "Please enter a valid size.",
+      text: "Matrix must be made by even numbers.",
+      showConfirmButton: false
+    });
+  } else if(level.size < 4) {
+    Swal.fire({
+      toast: true,
+      position: "top-right",
+      icon: 'error',
+      timer: 3000,
+      timerProgressBar: true,
+      text: "Matrix must be grater than 4.",
+      showConfirmButton: false
+    });
+  } else if(level.size > 20) {
+    Swal.fire({
+      toast: true,
+      position: "top-right",
+      icon: 'error',
+      timer: 3000,
+      timerProgressBar: true,
+      text: "Matrix must be less than 20",
       showConfirmButton: false
     });
   } else {
@@ -41,7 +62,7 @@ const sendOption = () => {
 <template>
   <div class="center-align">
     <RouterLink
-      to="/auth"
+      to="/"
       style="
         position: absolute;
         top: 0;
@@ -106,8 +127,13 @@ const sendOption = () => {
         </div>
       </div>
 
+      <div style="margin-top:32px">
+        <p><MDBIcon icon="home" /> Time(second):</p>
+        <MDBRange :min="0" :max="3600" v-model="level.time" />
+      </div>
+
       <div class="content-center">
-        <MDBBtn color="primary" @click="sendOption">START</MDBBtn>
+        <MDBBtn color="primary" @click="sendOption">OK</MDBBtn>
       </div>
     </div>
   </div>

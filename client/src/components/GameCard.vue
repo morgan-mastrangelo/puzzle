@@ -1,10 +1,23 @@
 <script setup lang="ts">
-const props = defineProps(['value']);
+const props = defineProps(['data']);
+const emit = defineEmits(['change']);
+
+function toggleOpen() {
+  emit('change', {
+    ...props.data,
+    open: !props.data.open,
+    hint: false,
+    matched: false
+  });
+}
 </script>
 
 <template>
-    <div>
-        <span>{{ props.value }}</span>
-        <slot></slot>
-    </div>
+  <div
+    @click="toggleOpen"
+    :class="props.data.hint ? 'hint' : props.data.matched ? 'matched' : props.data.open ? 'active' : ''"
+  >
+    <span>{{ props.data.value }}</span>
+    <slot></slot>
+  </div>
 </template>
