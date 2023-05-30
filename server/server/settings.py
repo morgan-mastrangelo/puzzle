@@ -40,9 +40,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders',
     'rest_framework',
     'rest_framework.authtoken',
-    'corsheaders',
     'app'
 ]
 
@@ -90,23 +90,14 @@ DATABASES = {
 
 
 # REST FRAMEWORK
-REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': {
-        'rest_framework.authentication.TokenAuthentication',
-    },
-    'DEFAULT_PERMISSION_CLASSES': {
-        'rest_framework.permissions.IsAuthenticated'
-    }
-}
-
-# Json Web Token Settings
-JWT_AUTH = {
-    'JWT_SECRET_KEY': 'puzzle',
-    'JWT_ALGORITHM': 'HS256',
-    'JWT_ALLOW_REFRESH': True,
-    'JWT_EXPIRATION_DELTA': datetime.timedelta(days=7),
-    'JWT_REFRESH_EXPIRATION_DELTA': datetime.timedelta(days=14)
-}
+# REST_FRAMEWORK = {
+#     'DEFAULT_AUTHENTICATION_CLASSES': {
+#         'rest_framework.authentication.TokenAuthentication',
+#     },
+#     'DEFAULT_PERMISSION_CLASSES': {
+#         'rest_framework.permissions.IsAuthenticated'
+#     }
+# }
 
 
 # Password validation

@@ -1,11 +1,48 @@
 import math
 from datetime import datetime
+from django.core import serializers
 from django.contrib.auth.hashers import make_password
 from app.models import UserModel, GameHistoryModel
-from app.serializers import UserSerializer, GameHistorySerializer
+from app.serializers.adminSerializer import UserSerializer, GameHistorySerializer
+from app.serializers.userSerializer import RegisterSerializer
 from rest_framework import status, generics
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.authtoken.models import Token
+
+
+class CustomAuthToken(ObtainAuthToken):
+    def post(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data, context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data['user']
+        token, created = Token.objects.get_or_create(user=user)
+
+        return Response({
+            'token': token.key,
+            'user_id': user.pk,
+            'email': user.email
+        })
+
+
+class RegisterView(generics.GenericAPIView):
+    serializer_class = RegisterSerializer
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            user_account = serializer.save()
+            user = serializers.serialize('python', [user_account])[0]['fields']
+            return Response({
+                "success": True,
+                "message": "Successfully registered",
+                "user": user
+            }, status=status.HTTP_201_CREATED)
+        else:
+            return Response({
+                "success": False,
+                "message": serializer.errors
+            }, status=status.HTTP_400_BAD_REQUEST)
 
 class UserView(generics.GenericAPIView):
     serializer_class = UserSerializer
@@ -107,43 +144,29 @@ class UserView(generics.GenericAPIView):
                 }, status=status.HTTP_400_BAD_REQUEST)
             
     def delete(self, request):
-        pk = request.GET.get('id')
-        user = self.get_user_by_pk(pk=pk)
+        pk = request.GET.get('id', 'all')
 
-        if user == None:
-            return Response({
-                "success": False,
-                "message": "Cannot find the user."
-            }, status=status.HTTP_404_NOT_FOUND)
-        else:
+        if pk == 'all':
+            user = UserModel.objects.all()
             user.delete()
             return Response({
                 "success": True,
-                "message": "Deleted successfully."
+                "users": user
             }, status=status.HTTP_204_NO_CONTENT)
-        
+        else:
+            user = self.get_user_by_pk(pk=pk)
 
-class LoginView(generics.GenericAPIView):
-    serializer_class = UserSerializer
-    queryset = UserModel
-
-    def get_user_by_email(self, email):
-        try:
-            return UserModel.objects.get(email=email)
-        except:
-            return None
-    
-    def post(self, request):
-        loginData = request.data
-        user = self.get_user_by_email(email=loginData["email"])
-
-        if user == None:
-            return Response({
-                "success": False,
-                "message": "Cannot find the user."
-            }, status=status.HTTP_404_NOT_FOUND)
-        # else:
-            # auth = JSONWebTokenAuthentication()
+            if user == None:
+                return Response({
+                    "success": False,
+                    "message": "Cannot find the user."
+                }, status=status.HTTP_404_NOT_FOUND)
+            else:
+                user.delete()
+                return Response({
+                    "success": True,
+                    "message": "Deleted successfully."
+                }, status=status.HTTP_204_NO_CONTENT)
 
 
 class GameHistoryView(generics.GenericAPIView):
