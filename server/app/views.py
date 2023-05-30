@@ -5,6 +5,7 @@ from app.models import UserModel, GameHistoryModel
 from app.serializers import UserSerializer, GameHistorySerializer
 from rest_framework import status, generics
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 
 class UserView(generics.GenericAPIView):
     serializer_class = UserSerializer
@@ -120,7 +121,30 @@ class UserView(generics.GenericAPIView):
                 "success": True,
                 "message": "Deleted successfully."
             }, status=status.HTTP_204_NO_CONTENT)
-            
+        
+
+class LoginView(generics.GenericAPIView):
+    serializer_class = UserSerializer
+    queryset = UserModel
+
+    def get_user_by_email(self, email):
+        try:
+            return UserModel.objects.get(email=email)
+        except:
+            return None
+    
+    def post(self, request):
+        loginData = request.data
+        user = self.get_user_by_email(email=loginData["email"])
+
+        if user == None:
+            return Response({
+                "success": False,
+                "message": "Cannot find the user."
+            }, status=status.HTTP_404_NOT_FOUND)
+        # else:
+            # auth = JSONWebTokenAuthentication()
+
 
 class GameHistoryView(generics.GenericAPIView):
     serializer_class = GameHistorySerializer

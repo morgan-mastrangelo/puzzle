@@ -63,7 +63,7 @@ function setCardOpen(change: PuzzleMatrix): void {
             for (let j = 0; j < puzzleMatrix.value.length; j++) {
               if (puzzleMatrix.value[j].id === openedCards.value[0].id) {
                 remainCards.value -= 2;
-                totalScore.value += 50 / (size * size);
+                totalScore.value += 50 / (size*size/2);
 
                 setTimeout(() => {
                   openedCards.value = [];
@@ -89,7 +89,7 @@ function setCardOpen(change: PuzzleMatrix): void {
                 setTimeout(() => {
                   puzzleMatrix.value[j].open = false;
                   puzzleMatrix.value[i].open = false;
-                }, 1000);
+                }, 700);
               }
             }
           }
@@ -110,14 +110,16 @@ function getHint(): void {
     text: "You will lose your score by -0.5 star.",
     confirmButtonText: 'Yes',
     showDenyButton: true
-  }).then(() => {
-    for (let i = 0, j = puzzleMatrix.value.length - 1; i < j; i++, j--) {
-      if (!puzzleMatrix.value[i].matched && !puzzleMatrix.value[j].matched && puzzleMatrix.value[i].value === puzzleMatrix.value[j].value) {
-        puzzleMatrix.value[i].hint = true;
-        puzzleMatrix.value[j].hint = true;
-        hints.value--;
-        totalScore.value -= 0.5;
-        break;
+  }).then((result) => {
+    if(result.isConfirmed) {
+      for (let i = 0, j = puzzleMatrix.value.length - 1; i < j; i++, j--) {
+        if (!puzzleMatrix.value[i].matched && !puzzleMatrix.value[j].matched && puzzleMatrix.value[i].value === puzzleMatrix.value[j].value) {
+          puzzleMatrix.value[i].hint = true;
+          puzzleMatrix.value[j].hint = true;
+          hints.value--;
+          totalScore.value -= 0.5;
+          break;
+        }
       }
     }
   });
