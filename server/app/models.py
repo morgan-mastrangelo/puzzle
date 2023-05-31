@@ -1,10 +1,12 @@
 import uuid
+import jwt
+import datetime
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
+from typing import Dict, Any
 
-class UserModel(AbstractBaseUser):
+
+class UserModel(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    intid = models.IntegerField(auto_created=True, unique=True)
     fullname = models.CharField(max_length=128)
     username = models.CharField(max_length=255)
     email = models.EmailField()
@@ -12,7 +14,6 @@ class UserModel(AbstractBaseUser):
     createdAt = models.DateTimeField(auto_now_add=True)
     updatedAt = models.DateTimeField(auto_now_add=True)
 
-    USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username', 'fullname', 'email']
 
     class Meta:
@@ -38,3 +39,16 @@ class GameHistoryModel(models.Model):
 
         def __str__(self) -> str:
             return self.finishedAt
+        
+
+def generate_token(user: UserModel, secret_key: str, duration: int) -> str:
+    payload: Dict[str, Any] = {
+        "id": str(user.id),
+        "username": user.username,
+        "fullname": user.fullname,
+        "email": user.email,
+        "exp": datetime.datetime.utcnow() + datetime.timedelta(seconds=duration)
+    }
+
+    token = jwt.encode(payload, secret_key, algorithm="HS256")
+    return token
