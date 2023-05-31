@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from app.models import UserModel
-from django.contrib.auth.hashers import make_password
+from django.contrib.auth.hashers import make_password, check_password
 
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -8,7 +8,7 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UserModel
-        fields = ["username", "fullname", "email", "password", "password2"]
+        fields = ["name", "email", "password", "password2"]
         extra_kwargs = {"password": {"write_only": True}}
 
     def email_checker(self):
@@ -35,8 +35,7 @@ class RegisterSerializer(serializers.ModelSerializer):
         
     def prepare_account(self):
         self.user_account = UserModel(
-            username=self.validated_data["username"],
-            fullname=self.validated_data["fullname"],
+            name=self.validated_data["name"],
             email=self.validated_data["email"],
             password=make_password(self.validated_data["password"])
         )
@@ -47,3 +46,25 @@ class RegisterSerializer(serializers.ModelSerializer):
         self.prepare_account()
         self.user_account.save()
         return self.user_account
+    
+
+class LoginSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserModel
+        fields = ["email", "password"]
+
+    def check_user(self):
+        if UserModel.objects.filter(email=self.validated_data["email"]).exists():
+            user = UserModel.objects.get(email=self.validated_data["email"])
+            if check_password(self.validated_data["password"], user.password):
+                return user
+            else:
+                raise serializers.ValidationError({
+                    "success": False,
+                    "message": "Passwords is incorrect."
+                })
+        else:
+            raise serializers.ValidationError({
+                "success": False,
+                "message": "The user does not exist."
+            })

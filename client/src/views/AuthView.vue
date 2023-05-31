@@ -37,7 +37,32 @@ const registerSchema = yup.object().shape({
 
 const loginSubmit = () => {
   loginSchema.validate(loginData)
-    .then(() => console.info('Validation success!'))
+    .then(() => {
+      store.loginUser(loginData)
+        .then(response => {
+          if(response.success === true) {
+            Swal.fire({
+              title: response.message,
+              icon: 'success',
+              confirmButtonText: "Go to option"
+            })
+            .then(() => {
+              localStorage.setItem('access_token', response.token);
+              store.accessToken();
+            });
+          } else {
+            Swal.fire({
+              toast: true,
+              position: 'top-right',
+              icon: 'error',
+              timer: 3000,
+              timerProgressBar: true,
+              text: response.message,
+              showConfirmButton: false
+            });
+          }
+        })
+    })
     .catch(error => Swal.fire({
       toast: true,
       position: "top-right",

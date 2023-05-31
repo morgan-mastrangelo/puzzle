@@ -5,3 +5,11 @@ export interface PuzzleMatrix {
   matched: boolean;
   hint: boolean;
 }
+
+export interface GameHistory {
+  name: string;
+  email: string;
+  score: number;
+  limitTime: number;
+  overTime: number;
+}
