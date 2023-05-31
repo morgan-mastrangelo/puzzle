@@ -2,6 +2,7 @@
 import Swal from 'sweetalert2';
 import { MDBInput, MDBRadio, MDBBtn, MDBIcon, MDBRange } from 'mdb-vue-ui-kit';
 import { useGameStore } from '../stores/game';
+import router from '@/router';
 
 const store = useGameStore();
 
@@ -50,7 +51,7 @@ const setOption = () => {
     });
   } else {
     store.options.setted = true;
-    window.location.href = "/stage";
+    router.push("/stage");
   }
 }
 </script>

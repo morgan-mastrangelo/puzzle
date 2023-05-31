@@ -2,6 +2,7 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import { defineStore } from "pinia";
 import { ref } from "vue";
+import router from "@/router";
 
 export const useUserStore = defineStore('user', () => {
   const userData = ref({
@@ -26,9 +27,11 @@ export const useUserStore = defineStore('user', () => {
     return axios.get('http://127.0.0.1:8000/api/token/')
       .then(res => {
         if(res.data.success === true) {
-          window.location.href = "/option";
+          userData.value.name = res.data.user.name;
+          userData.value.email = res.data.user.email;
+          router.push('/option');
         } else {
-          window.location.href = "/auth";
+          router.push('/auth');
         }
       })
       .catch(({response:{data}}) => {

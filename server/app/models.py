@@ -26,6 +26,8 @@ class GameHistoryModel(models.Model):
     name = models.CharField(max_length=128)
     email = models.EmailField()
     score = models.FloatField()
+    difficulty = models.CharField(max_length=128)
+    matrixSize = models.IntegerField()
     limitTime = models.IntegerField()
     overTime = models.IntegerField()
     finishedAt = models.DateTimeField(auto_now_add=True)
