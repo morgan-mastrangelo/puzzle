@@ -1,14 +1,18 @@
 main
   display: flex
+  flex-direction: column
   justify-content: center
+  align-items: center
   font-family: Arial, Helvetica, sans-serif
   font-size: 4vmin
   padding: 24px
 
   table
+    position: relative
     font-size: 20px
     width: 100%
     border: 1px solid white
+    border-radius: 4px
 
     caption
       font-weight: bold
@@ -16,6 +20,77 @@ main
       text-shadow: 0.25vmin 0.25vmin 0.25vmin rgba(0,0,0,0.5)
       margin: 24px 0
       color: white
+
+    .search
+      font-size: 16px
+      position: absolute
+      top: 0
+      left: 0
+      border: 0
+      outline: 0
+      border-radius: 99px
+      padding: 12px 20px
+      margin: 24px
+
+    .page-select
+      font-size: 16px
+      position: absolute
+      top: 0
+      right: 0
+      border: 0
+      outline: 0
+      border-radius: 99px
+      padding: 12px
+      margin: 24px
+
+      option
+        font-size: 20px
+
+    thead
+      background-color: rgb(26,45,62)
+      color: white
+
+    tr:nth-child(odd)
+      background-color: #e9fffc
+
+    tr:nth-child(even)
+      background-color: white
     
     td
       padding: 12px
+      button
+        display: inline-flex
+        justify-content: center
+        align-items: center
+        font-size: 20px
+        width: 40px
+        height: 40px
+        border: none
+        outline: none
+        border-radius: 50%
+        cursor: pointer
+        background: transparent
+
+  .pagination
+    button
+      display: inline-flex
+      justify-content: center
+      align-items: center
+      width: 40px
+      height: 40px
+      border: none
+      outline: none
+      border-radius: 50%
+      margin: 4px
+      background-color: transparent
+      transition: all .3s
+
+      &:hover
+        cursor: pointer
+        background: rgba(255,255,255,0.5)
+
+      &:active
+        background: white
+
+      .active
+        background: #4caf50
